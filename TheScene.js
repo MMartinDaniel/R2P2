@@ -95,53 +95,7 @@ class TheScene extends THREE.Scene {
   
   // Public methods
 
-  /// It adds a new box, or finish the action
-  /**
-   * @param event - Mouse information
-   * @param action - Which action is requested to be processed: start adding or finish.
-   */
-  addBox (event, action) {
-    this.ground.addBox(event, action);
-  }
-  
-  /// It moves or rotates a box on the ground
-  /**
-   * @param event - Mouse information
-   * @param action - Which action is requested to be processed: select a box, move it, rotate it or finish the action.
-   */
-  moveBox (event, action) {
-    this.ground.moveBox (event, action);
-  }
-  
-  /// The r2d2 can take a box
-  /**
-   * @return The new height of the hook, on the top of the taken box. Zero if no box is taken
-   */
-  
-  takeBox () { 
-    var box = this.ground.takeBox (this.r2d2.getHookPosition());
-    if (box === null)
-      return 0; 
-    else 
-      return this.r2d2.takeBox (box); 
-    // The retuned height set the new limit to down the hook
-  }
-  
-
-  /// The r2d2 drops its taken box
-  dropBox () {
-    var box = this.r2d2.dropBox ();
-    if (box !== null) {
-      box.position.copy (this.r2d2.getHookPosition());
-      box.position.y = 0;
-      this.ground.dropBox (box);
-    }
-  }
-  
-  /// It sets the r2d2 position according to the GUI
-  /**
-   * @controls - The GUI information
-   */
+ 
   animate (controls) {
     this.axis.visible = controls.axis;
     this.spotLight.intensity = controls.lightIntensity;
@@ -149,10 +103,8 @@ class TheScene extends THREE.Scene {
     this.addedLight.intensity = controls.addedLightIntensity;
     //---
     if(controls.height >= 20){
-      this.dropBox();
       controls.takeBox = false;
     }
-    this.r2d2.setHookPosition (controls.rotation, controls.distance, controls.height);
   }
   
   /// It returns the camera
