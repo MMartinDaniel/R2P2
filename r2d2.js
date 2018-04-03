@@ -81,7 +81,7 @@ class r2d2 extends THREE.Object3D {
   */
     createBase () {
     var base = new THREE.Mesh (
-      new THREE.CylinderGeometry (this.r2d2Width/10, this.r2d2Width/20, this.r2d2Height/2, 16, 8), this.material);
+      new THREE.CylinderGeometry (this.r2d2Width/10, this.r2d2Width/10, this.r2d2Height/2, 16, 8), this.material);
     base.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, this.r2d2Height/3, 0));
    
     base.castShadow = true;
