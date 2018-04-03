@@ -33,7 +33,7 @@ class r2d2 extends THREE.Object3D {
     
     // Objects for operating with the r2d2
     this.base         = null;
-    this.jib          = null;
+    this.head          = null;
     this.trolley      = null;
     this.string       = null;
     // The string length is 1 at the beginning. So, the current length is the scale factor
@@ -99,75 +99,24 @@ class r2d2 extends THREE.Object3D {
     mast.position.y = this.baseHookHeight;
     mast.autoUpdateMatrix = false;
     mast.updateMatrix();
-    mast.add(this.createJib());
+
     return mast;
   }
   
   /// It creates the jib, and adds the trolley-string-hook group to the jib
-  createJib () {
-    this.jib = new THREE.Mesh (
-      new THREE.BoxGeometry (this.r2d2Width, this.r2d2Width/10, this.r2d2Width/10),
-                          this.material);
-    this.jib.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0.3*this.r2d2Width, this.r2d2Width/20, 0));
-    this.jib.castShadow = true;
-    this.jib.position.y = this.r2d2Height;
-    this.jib.rotation.y = this.angle ;
-    this.jib.add (this.createTrolleyStringHook());
-    return this.jib;
-  }
-  
 
-  /// It creates the trolley, string and hook
-  createTrolleyStringHook () {
-    this.trolley = new THREE.Mesh (
-      new THREE.BoxGeometry (this.r2d2Width/10, this.trolleyHeight, this.r2d2Width/10),
-                              this.material);
-    this.trolley.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, this.trolleyHeight/2, 0));
-    this.trolley.castShadow = true;
-    this.trolley.position.y = -this.trolleyHeight;
-    this.trolley.position.x = this.distanceMin;
-    
-    this.string = new THREE.Mesh (
-      new THREE.CylinderGeometry (this.r2d2Width/200, this.r2d2Width/200, 1), this.material);
-    this.string.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, -0.5, 0));
-    this.string.castShadow = true;
-    this.stringLength = this.computeStringLength();
-    this.string.scale.y = this.stringLength;
-    this.trolley.add (this.string);
-    
-    this.hook = new THREE.Mesh (
-      new THREE.CylinderGeometry (this.r2d2Width/40, this.r2d2Width/40, this.baseHookHeight, 16, 1),
-                           this.material);
-    this.hook.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, -this.baseHookHeight/2, 0));
-    this.hook.castShadow = true;
-    this.hook.position.y = -this.stringLength;
-    this.trolley.add (this.hook);
-    
-    return this.trolley;
-  }
+
   
   /// It sets the angle of the jib
   /**
    * @param anAngle - The angle of the jib
    */
-  setJib (anAngle) {
-    this.angle  = anAngle;
-    this.jib.rotation.y = this.angle ;
-    if (this.feedBack.visible) {
-      this.feedBack.update();
-    }
-  }
-  
+
   /// It sets the distance of the trolley from the mast
   /**
    * @param aDistance - The distance of the trolley from the mast
    */
-  setTrolley (aDistance) {
-    if (this.distanceMin <= aDistance && aDistance <= this.distanceMax) {
-      this.distance = aDistance;
-      this.trolley.position.x = this.distance;
-    }
-  }
+
   
   /// It sets the distance of the hook from the bottom of the base
   /**
@@ -177,8 +126,7 @@ class r2d2 extends THREE.Object3D {
     if (this.heightMin <= aHeight && aHeight <= this.heightMax) {
       this.height = aHeight;
       this.stringLength = this.computeStringLength ()
-      this.string.scale.y = this.stringLength;
-      this.hook.position.y = -this.stringLength;
+
     }
   }
 
@@ -197,8 +145,7 @@ class r2d2 extends THREE.Object3D {
    * @param aHeight - The distance of the hook from the bottom of the base
    */
   setHookPosition (anAngle, aDistance, aHeight) {
-    this.setJib (anAngle);
-    this.setTrolley (aDistance);
+
     this.setHook (aHeight);
   }
   
@@ -211,7 +158,6 @@ class r2d2 extends THREE.Object3D {
     if (world === undefined)
       world = r2d2.WORLD;
     var hookPosition = new THREE.Vector3();
-    hookPosition.setFromMatrixPosition (this.hook.matrixWorld);
     hookPosition.y -= this.baseHookHeight;
     if (world === r2d2.LOCAL) {
       var r2d2Position = new THREE.Vector3();
@@ -235,8 +181,6 @@ class r2d2 extends THREE.Object3D {
       this.box.position.x = 0;
       this.box.position.y = -this.box.geometry.parameters.height-this.baseHookHeight;
       this.box.position.z = 0;
-      this.box.rotation.y -= this.jib.rotation.y;
-      this.hook.add (this.box);
       return newHeight;
     }
     return 0;
@@ -250,9 +194,7 @@ class r2d2 extends THREE.Object3D {
     if (this.box !== null) {
       this.setFeedBack(false);
       var theBox = this.box;
-      this.hook.remove (this.box);
       this.box = null;
-      theBox.rotation.y += this.jib.rotation.y;
       this.heightMin = 0;
       return theBox;
     } else
