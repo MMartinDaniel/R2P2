@@ -31,8 +31,9 @@ class TheScene extends THREE.Scene {
    */
   createCamera (renderer) {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.camera.position.set (60, 30, 60);
-    var look = new THREE.Vector3 (0,20,0);
+   // this.camera.position.set (240, 240, 240);
+   this.camera.position.set(60,40,60);
+    var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
 
     this.trackballControls = new THREE.TrackballControls (this.camera, renderer);
@@ -82,10 +83,12 @@ class TheScene extends THREE.Scene {
     var model = new THREE.Object3D();
 
     var loader1 = new THREE.TextureLoader();
-    var texturaGrua = loader1.load ("imgs/textura1.jpg");
+    var texturaGrua = loader1.load ("imgs/images.jpg");
     var mat = new THREE.MeshPhongMaterial({map: texturaGrua});
     this.r2d2 = new r2d2({r2d2Height: 30, r2d2Width: 45, material: mat});
     model.add (this.r2d2);
+    //this.r2d2.position.set(0, 0, -140);
+    this.r2d2.position.set(0,0,0);
     var loader = new THREE.TextureLoader();
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
@@ -105,6 +108,7 @@ class TheScene extends THREE.Scene {
     if(controls.height >= 20){
       controls.takeBox = false;
     }
+    this.r2d2.setPositionH(controls.rotation, controls.distance, controls.height);
   }
   
   /// It returns the camera

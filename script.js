@@ -74,9 +74,9 @@ function createGUI (withStats) {
     });
   
   var r2d2Controls = gui.addFolder ('r2d2 Controls');
-    r2d2Controls.add (GUIcontrols, 'rotation', 0, 12, 0.001).name('Rotation :').listen();
-    r2d2Controls.add (GUIcontrols, 'distance', 0, 50, 0.1).name('Distance :').listen();
-    r2d2Controls.add (GUIcontrols, 'height', 0, 50, 0.1).name('Height :').listen();
+    r2d2Controls.add (GUIcontrols, 'rotation', 0, 12, 0.001).name('Rotación Cabeza').listen();
+    r2d2Controls.add (GUIcontrols, 'distance', 0, 50, 0.1).name('Rotar Cuerpo').listen();
+    r2d2Controls.add (GUIcontrols, 'height', 0, 50, 0.1).name('Altura piernas').listen();
     r2d2Controls.add (GUIcontrols, 'SetGrua').name (': Posicionar Grua :');
    
     // The method  listen()  allows the height attribute to be written, not only read

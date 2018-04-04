@@ -18,7 +18,7 @@ class r2d2 extends THREE.Object3D {
     
     // If there are no parameters, the default values are used
     
-    this.r2d2Height = (parameters.r2d2Height === undefined ? 30 : parameters.r2d2Height);
+    this.r2d2Height = (parameters.r2d2Height === undefined ? 20 : parameters.r2d2Height);
     this.r2d2Width  = (parameters.r2d2Width === undefined ? 45 : parameters.r2d2Width);
     this.material    = (parameters.material === undefined ? new THREE.MeshPhongMaterial ({color: 0xA2C257, specular: 0xfbf804, shininess: 70}) : parameters.material);
           
@@ -32,15 +32,16 @@ class r2d2 extends THREE.Object3D {
     
     // Objects for operating with the r2d2
     this.base         = null;
-
+    this.head = null;
+    this.brazoD = null;
+    this.brazoI = null;
     this.base = this.createBase();
+
 
     // A way of feedback, a red jail will be visible around the r2d2 when a box is taken by it
 
     this.add (this.base);
     
-
-
 
   }
   
@@ -49,14 +50,15 @@ class r2d2 extends THREE.Object3D {
     var base = new THREE.Mesh (
       new THREE.CylinderGeometry (this.r2d2Width/10, this.r2d2Width/10, this.r2d2Height/3, 16, 8), this.material);
     base.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, this.r2d2Height/3, 0));
-   
+    base.position.y =-2.2;
     base.castShadow = true;
     base.autoUpdateMatrix = false;
 
     //Funciones para crear la cabeza, y los dos hombros, que a su vez incluiran la de cada brazo y estas las de cada pie
-    base.add(this.createHead());
-    base.add(this.createRightShoulder());
-    base.add(this.createLeftShoulder());
+    this.head = this.createHead();
+    base.add(this.head);
+    base.add(this.createShoulder({w:6,ww: 5}));
+    base.add(this.createShoulder({w:-6, ww: -5}));
     return base;
   }
 
@@ -78,10 +80,10 @@ class r2d2 extends THREE.Object3D {
 // LENTE
 createEye(){
     var eye = new THREE.Mesh (
-      new THREE.CylinderGeometry (this.r2d2Width/10, this.r2d2Width/10, this.r2d2Height/3, 16, 8), this.material);
-    eye.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, this.r2d2Height/2, 0));
-   // base.rotation.x = Math.PI / 2;
+      new THREE.CylinderGeometry (this.r2d2Width/50, this.r2d2Width/50, this.r2d2Height/20, 10, 8), this.material);
 
+    eye.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 11.5, -12.5));
+    eye.rotateX(Math.PI/3);
     eye.castShadow = true;
     eye.autoUpdateMatrix = false;
     eye.updateMatrix();
@@ -90,98 +92,68 @@ createEye(){
     return eye;
 }
 
-// HOMBROS
-createRightShoulder (){
-  var rshoulder = new THREE.Mesh ( 
-    new THREE.BoxGeometry (this.r2d2Width/10, this.r2d2Width/20, this.r2d2Height/15), this.material);
-    rshoulder.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (5, this.r2d2Height/2.3, 0));
-    
-    rshoulder.castShadow = true;
-    rshoulder.autoUpdateMatrix = false;
-    rshoulder.updateMatrix();
 
-    //crear brazo derecho
-    rshoulder.add(this.createRightArm());
-
-    return rshoulder;
-} 
-
-createLeftShoulder (){
+createShoulder (place){
   var lshoulder = new THREE.Mesh ( 
     new THREE.BoxGeometry (this.r2d2Width/10, this.r2d2Width/20, this.r2d2Height/15), this.material);
-    lshoulder.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (-5, this.r2d2Height/2.3, 0));
+    lshoulder.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (place.ww, this.r2d2Height/2.3, 0));
     
     lshoulder.castShadow = true;
     lshoulder.autoUpdateMatrix = false;
     lshoulder.updateMatrix();
 
     //crear brazo izquierdo
-    lshoulder.add(this.createLeftArm());
+    lshoulder.add(this.createArm({w: place.w}));
 
     return lshoulder;
   } 
 
 // BRAZOS
-createRightArm (){
-  var rarm = new THREE.Mesh ( 
-    new THREE.CylinderGeometry (this.r2d2Width/50, this.r2d2Width/50 , this.r2d2Height/3, 16, 8), this.material);
-    rarm.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (6, this.r2d2Height/4, 0));
-    
-  rarm.castShadow = true;
-  rarm.autoUpdateMatrix = false;
-  rarm.updateMatrix();
-
-  //crear pie derecho
-  rarm.add(this.createRightFoot());
-
-  return rarm;  
-}
-
-// PIERNAS
-createLeftArm (){
+createArm (place){
   var larm = new THREE.Mesh ( 
     new THREE.CylinderGeometry (this.r2d2Width/50, this.r2d2Width/50 , this.r2d2Height/3, 16, 8), this.material);
-    larm.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (-6, this.r2d2Height/4, 0));
+    larm.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (place.w, this.r2d2Height/4, 0));
     
   larm.castShadow = true;
   larm.autoUpdateMatrix = false;
   larm.updateMatrix();
 
   //Crear pie iquierdo
-  larm.add(this.createLeftFoot());
+  larm.add(this.createFoot({w: place.w}));
 
   return larm;  
 }
 
 
-createLeftFoot (){
-  var lfoot = new THREE.Mesh ( 
-    new THREE.ConeGeometry (this.r2d2Width/20, this.r2d2Width/20 , this.r2d2Height/3, 16, 8), this.material);
-    lfoot.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (-6, this.r2d2Height/8.5, 0));
-    
-  lfoot.castShadow = true;
-  lfoot.autoUpdateMatrix = false;
-  lfoot.updateMatrix();
-
-    return lfoot;  
-}
-
-createRightFoot (){
+createFoot (place){
   var rfoot = new THREE.Mesh ( 
     new THREE.ConeGeometry (this.r2d2Width/20, this.r2d2Width/20 , this.r2d2Height/3, 16, 8), this.material);
-    rfoot.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (6, this.r2d2Height/8.5, 0));
+    rfoot.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (place.w, this.r2d2Height/8.5, 0));
     
   rfoot.castShadow = true;
   rfoot.autoUpdateMatrix = false;
   rfoot.updateMatrix();
-
     return rfoot;  
 }
 
+setPositionH(cabeza,cuerpo,brazos){
+  this.setHead(cabeza);
+  this.setBody(cuerpo);
+  this.setBrazos(brazos);
+}
 
+setHead(cabeza){
+  this.head.rotation.y = cabeza;
+}
 
+setBody(cuerpo){
+  //this.base.rotation.x = cuerpo;
+}
 
-
+setBrazos(brazos){
+//  this.brazoD.height = brazos;
+//  this.brazoI.height = brazos;
+}
 }
 
 
