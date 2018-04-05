@@ -16,7 +16,7 @@ class TheScene extends THREE.Scene {
     this.trackballControls = null;
     this.r2d2 = null;
     this.ground = null;
-  
+    
     this.createLights ();
     this.createCamera (renderer);
     this.axis = new THREE.AxisHelper (25);
@@ -89,11 +89,28 @@ class TheScene extends THREE.Scene {
     model.add (this.r2d2);
     //this.r2d2.position.set(0, 0, -140);
     this.r2d2.position.set(0,0,0);
+
+
+    //SESION 2 
+
+
+    var loader2 = new THREE.TextureLoader();
+    var texturaPlato = loader2.load ("imgs/ufobase.jpg");
+    var mat2 = new THREE.MeshPhongMaterial({map: texturaPlato});
+    this.ovo = new Ovo({r2d2Height: 30, r2d2Width: 45, material: mat2, type: 1});
+    model.add (this.ovo);
+
+
+    //---------------
+
     var loader = new THREE.TextureLoader();
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
     model.add (this.ground);
     return model;
+
+
+
   }
   
   // Public methods

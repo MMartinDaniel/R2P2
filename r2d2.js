@@ -30,6 +30,11 @@ class r2d2 extends THREE.Object3D {
     // Height of different parts
     this.baseHookHeight = this.r2d2Height/100;
     
+    //SESION 2 DATOS
+
+    this.energia = 10;
+    this.puntos = 0;
+
     // Objects for operating with the r2d2
     this.base         = null;
     this.head = null;
