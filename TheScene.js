@@ -16,13 +16,25 @@ class TheScene extends THREE.Scene {
     this.trackballControls = null;
     this.r2d2 = null;
     this.ground = null;
-    
+    this.ovos = [];
+    this.ovo = new THREE.Object3D();
+    this.n_ovos = 0;
     this.createLights ();
     this.createCamera (renderer);
     this.axis = new THREE.AxisHelper (25);
     this.add (this.axis);
     this.model = this.createModel ();
+
     this.add (this.model);
+
+/*
+    this.hudCanvas = document.createElement('canvas');
+    this.hudCanvas.width = 100;
+    this.hudCanvas.height = 100;
+    this.hudBitMap = this.hudCanvas.getContext('2d');
+*/
+
+
   }
   
   /// It creates the camera and adds it to the graph
@@ -32,7 +44,7 @@ class TheScene extends THREE.Scene {
   createCamera (renderer) {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
    // this.camera.position.set (240, 240, 240);
-   this.camera.position.set(60,40,60);
+   this.camera.position.set(240,160,240);
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
 
@@ -88,31 +100,33 @@ class TheScene extends THREE.Scene {
     this.r2d2 = new r2d2({r2d2Height: 30, r2d2Width: 45, material: mat});
     model.add (this.r2d2);
     //this.r2d2.position.set(0, 0, -140);
-    this.r2d2.position.set(0,0,0);
-
-
-    //SESION 2 
-
-
-    var loader2 = new THREE.TextureLoader();
-    var texturaPlato = loader2.load ("imgs/ufobase.jpg");
-    var mat2 = new THREE.MeshPhongMaterial({map: texturaPlato});
-    this.ovo = new Ovo({r2d2Height: 30, r2d2Width: 45, material: mat2, type: 1});
-    model.add (this.ovo);
-
-
-    //---------------
+    this.r2d2.position.set(0,0,-140);
 
     var loader = new THREE.TextureLoader();
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
     model.add (this.ground);
     return model;
-
-
-
   }
   
+  createOvo(parameters){
+
+ 
+    this.ovo = new THREE.Object3D();
+    var loader2 = new THREE.TextureLoader();
+    var texturaPlato = loader2.load ("imgs/ufobase.jpg");
+    var mat2 = new THREE.MeshPhongMaterial({map: texturaPlato});
+    this.ovo = new Ovo({r2d2Height: 30, r2d2Width: 45, material: mat2, type: parameters.type});
+    this.pos = Math.floor(Math.random() * (140 - (-140) + 1)) + -140;
+
+    this.ovo.position.set(this.pos,0,144);
+    this.ovos.push(this.ovo);
+    parameters.model.add (this.ovos[this.n_ovos]);
+    this.n_ovos++;
+    return parameters.model;
+
+  }
+
   // Public methods
 
  
@@ -121,13 +135,43 @@ class TheScene extends THREE.Scene {
     this.spotLight.intensity = controls.lightIntensity;
     //P1
     this.addedLight.intensity = controls.addedLightIntensity;
-    //---
-    if(controls.height >= 20){
-      controls.takeBox = false;
+    if(Math.floor(Math.random()*100) <= 1){
+    this.add(this.spawnOvo());
     }
+
+    this.moveOvo();
+
     this.r2d2.setPositionH(controls.rotation, controls.distance, controls.height);
   }
   
+
+  spawnOvo(){
+    if(this.n_ovos < 10){
+      if(Math.floor(Math.random()*10) > 2){
+         this.createOvo({model:this.model, type:1});
+      }else{
+          this.createOvo({model:this.model, type:2});
+      }
+    }
+
+  }
+
+  moveOvo(){
+    for (var i = this.ovos.length - 1; i >= 0; i--) {
+      if(this.ovos[i].position.z > -151){
+       this.ovos[i].translateZ(this.ovos[i].getSpeed());
+      }else if(this.ovos[i].position.z < -150){
+        this.ovos[i].position.z = 140;
+        this.s = Math.random()*(-5 - (-2)) + (-2);
+        this.p = Math.floor(Math.random() * (140 - (-140) + 1)) + -140;
+        this.ovos[i].setSpeed({speed: this.s });
+        this.ovos[i].position.x = this.p;
+      }
+    }
+  
+
+  }
+
   /// It returns the camera
   /**
    * @return The camera

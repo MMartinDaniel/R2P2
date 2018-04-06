@@ -18,7 +18,7 @@ class Ovo extends THREE.Object3D {
     this.material    = (parameters.material === undefined ? new THREE.MeshPhongMaterial ({color: 0xFF0000, specular: 0xfbf804, shininess: 70}) : parameters.material);
 
     this.type = parameters.type;
-    this.speed = Math.random()*10;
+    this.speed = Math.random()*(-5 - (-2)) + (-2);
 
     // With these variables, the posititon of the hook is set
     this.angle           = 0;
@@ -41,7 +41,7 @@ class Ovo extends THREE.Object3D {
   createPlato(){
 	var base = new THREE.Mesh (
     new THREE.CylinderGeometry (1,5.5,2,13,28,false,6,6.3), this.material);
-    base.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 4, 10));
+    base.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 12, 10));
     base.castShadow = true;
     base.autoUpdateMatrix = false;
     base.add(this.createPilot());
@@ -52,7 +52,7 @@ class Ovo extends THREE.Object3D {
   createPilot(){
   	var pilot = new THREE.Mesh (
     new THREE.SphereGeometry (1.7,20, 5), this.material2);
-    pilot.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 5, 10));
+    pilot.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 13, 10));
     pilot.castShadow = true;
     pilot.autoUpdateMatrix = false;
     pilot.updateMatrix();
@@ -60,6 +60,12 @@ class Ovo extends THREE.Object3D {
   }
 
 
-
+  getSpeed(){
+  	//alert(this.speed);
+  	return this.speed;
+  }
+  setSpeed(parameters){
+  	this.speed = parameters.speed;
+  }
 
 }
