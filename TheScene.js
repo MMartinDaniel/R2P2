@@ -158,19 +158,31 @@ class TheScene extends THREE.Scene {
 
   moveOvo(){
     for (var i = this.ovos.length - 1; i >= 0; i--) {
-      if(this.ovos[i].position.z > -151){
-       this.ovos[i].translateZ(this.ovos[i].getSpeed());
+      if(this.ovos[i].position.z > -151){    
+        if( this.ovos[i].position.z > this.r2d2.position.z ){
+        }else{
+            if( this.ovos[i].position.x > this.r2d2.position.x-12 && this.ovos[i].position.x < this.r2d2.position.x+12 && this.ovos[i].getHit() == false ){
+                this.ovos[i].setHit({hit: true});
+               this.r2d2.quitarEnergia({type: this.ovos[i].getType() });
+               this.checkEndGame();
+            }
+
+        }
+      this.ovos[i].translateZ(this.ovos[i].getSpeed()); 
       }else if(this.ovos[i].position.z < -150){
         this.ovos[i].position.z = 140;
         this.s = Math.random()*(-5 - (-2)) + (-2);
         this.p = Math.floor(Math.random() * (140 - (-140) + 1)) + -140;
         this.ovos[i].setSpeed({speed: this.s });
         this.ovos[i].position.x = this.p;
+        this.ovos[i].setHit({hit:false});
       }
     }
   
 
   }
+
+
 
   /// It returns the camera
   /**
@@ -196,7 +208,11 @@ class TheScene extends THREE.Scene {
     this.camera.aspect = anAspectRatio;
     this.camera.updateProjectionMatrix();
   }
-  
+  checkEndGame(){
+    if(this.r2d2.getEnergia() <= 0){
+
+    }
+  } 
  
 }
 
