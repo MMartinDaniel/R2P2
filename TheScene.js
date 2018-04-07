@@ -24,6 +24,8 @@ class TheScene extends THREE.Scene {
     this.axis = new THREE.AxisHelper (25);
     this.add (this.axis);
     this.model = this.createModel ();
+    this.healthbar = this.createHealthBar();
+    this.model.add(this.healthbar);
 
     this.add (this.model);
 
@@ -107,9 +109,6 @@ class TheScene extends THREE.Scene {
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
     model.add (this.ground);
 
-    model.add(this.createHealthBar());
-    model.add(this.createHealthText());
-
     return model;
   }
   
@@ -167,7 +166,8 @@ class TheScene extends THREE.Scene {
         }else{
             if( this.ovos[i].position.x > this.r2d2.position.x-12 && this.ovos[i].position.x < this.r2d2.position.x+12 && this.ovos[i].getHit() == false ){
                 this.ovos[i].setHit({hit: true});
-               this.r2d2.quitarEnergia({type: this.ovos[i].getType() });
+                this.r2d2.quitarEnergia({type: this.ovos[i].getType() });
+              this.checkbar();
                this.checkEndGame();
             }
 
@@ -175,7 +175,8 @@ class TheScene extends THREE.Scene {
       this.ovos[i].translateZ(this.ovos[i].getSpeed()); 
       }else if(this.ovos[i].position.z < -150){
         this.ovos[i].position.z = 140;
-        this.s = Math.random()*(-5 - (-2)) + (-2);
+        var maxSpeed = 5 + (this.r2d2.getPuntos()/20);
+        this.s = Math.random()*(-maxSpeed - (-2)) + (-2);
         this.p = Math.floor(Math.random() * (140 - (-140) + 1)) + -140;
         this.ovos[i].setSpeed({speed: this.s });
         this.ovos[i].position.x = this.p;
@@ -186,6 +187,23 @@ class TheScene extends THREE.Scene {
 
   }
 
+  checkbar(){
+
+    document.getElementById('score').innerHTML = this.r2d2.getPuntos();
+
+    var energy = this.r2d2.getEnergia();
+     this.healthbar.scale.set(energy/100,1,1);
+     var mat;
+     if(energy > 50){
+       mat = new THREE.MeshBasicMaterial( {color: 0x00ff00,opacity: 1} );
+      }else if(energy > 20 && energy <= 50){ 
+         mat = new THREE.MeshBasicMaterial( {color: 0xff9900,opacity: 1} );
+      }else{
+        mat = new THREE.MeshBasicMaterial( {color: 0xff0000,opacity: 1} );
+      }
+
+    this.healthbar.material = mat;
+  }
 
 
   /// It returns the camera
@@ -215,39 +233,17 @@ class TheScene extends THREE.Scene {
   checkEndGame(){
     if(this.r2d2.getEnergia() <= 0){
 
+      document.getElementById('endbox').style.display = 'flex';
+      document.getElementById('pfinal').innerHTML = this.r2d2.getPuntos();
+
     }
   } 
  
-  createHealthText(){
 
-
-    var loader = new THREE.FontLoader();
-    var text;
-    loader.load( '../fonts/Helvetica_Regular.json', function ( font ) {
-     text = new THREE.TextGeometry( 'Energia', {
-        font: font,
-        size: 800,
-        height: 800,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 8,
-        bevelSegments: 5
-        } );
-    } );
-   
-    var material = new THREE.MeshPhongMaterial({
-        color: 0xdddddd
-    });
-    var textMesh = new THREE.Mesh( text, material );
-
-    return textMesh;
-    
-  }
 
 
   createHealthBar(){
-   var barra = new THREE.BoxGeometry (100, 10, 10);
+   var barra = new THREE.BoxGeometry (200, 10, 10);
    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
    var hbar = new THREE.Mesh (barra, material);
 
@@ -255,7 +251,6 @@ class TheScene extends THREE.Scene {
    hbar.autoUpdateMatrix = false;
    hbar.updateMatrix();
    return hbar;
-
  }
 
 }

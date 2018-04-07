@@ -13,6 +13,13 @@ stats = null;
 /// A boolean to know if the left button of the mouse is down
 mouseDown = false;
 
+
+  _moveLeft = false;
+  _moveRight = false;
+  _moveUp = false;
+  _moveDown = false;
+
+
 /// The current mode of the application
 applicationMode = TheScene.NO_ACTION;
 
@@ -247,7 +254,8 @@ $(function () {
   window.addEventListener ("mouseup", onMouseUp, true);
   window.addEventListener ("mousewheel", onMouseWheel, true);   // For Chrome an others
   window.addEventListener ("DOMMouseScroll", onMouseWheel, true); // For Firefox
-  
+  window.addEventListener('keydown', this._onKeyDown,false);
+  window.addEventListener('keyup', this._onKeyUp,false);
   // create a scene, that will hold all our elements such as objects, cameras and lights.
   scene = new TheScene (renderer.domElement);
  

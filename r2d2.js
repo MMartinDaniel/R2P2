@@ -165,6 +165,7 @@ quitarEnergia(parametros){
   if(parametros.type == 1){
      this.energia = this.energia-10;
    }else{
+    this.puntos = this.puntos + puntos;
     this.energia = this.energia +(5 - puntos);
    }
 
@@ -172,6 +173,9 @@ quitarEnergia(parametros){
 
 getEnergia(){
   return this.energia;
+}
+getPuntos(){
+  return this.puntos;
 }
 
 }
