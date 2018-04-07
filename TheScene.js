@@ -106,6 +106,10 @@ class TheScene extends THREE.Scene {
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
     model.add (this.ground);
+
+    model.add(this.createHealthBar());
+    model.add(this.createHealthText());
+
     return model;
   }
   
@@ -214,6 +218,46 @@ class TheScene extends THREE.Scene {
     }
   } 
  
+  createHealthText(){
+
+
+    var loader = new THREE.FontLoader();
+    var text;
+    loader.load( '../fonts/Helvetica_Regular.json', function ( font ) {
+     text = new THREE.TextGeometry( 'Energia', {
+        font: font,
+        size: 800,
+        height: 800,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelSegments: 5
+        } );
+    } );
+   
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xdddddd
+    });
+    var textMesh = new THREE.Mesh( text, material );
+
+    return textMesh;
+    
+  }
+
+
+  createHealthBar(){
+   var barra = new THREE.BoxGeometry (100, 10, 10);
+   var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+   var hbar = new THREE.Mesh (barra, material);
+
+   hbar.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 75, -170));
+   hbar.autoUpdateMatrix = false;
+   hbar.updateMatrix();
+   return hbar;
+
+ }
+
 }
 
   // class variables
