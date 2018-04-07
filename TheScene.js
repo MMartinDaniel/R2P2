@@ -106,6 +106,10 @@ class TheScene extends THREE.Scene {
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
     model.add (this.ground);
+
+    model.add(this.createHealthBar());
+    model.add(this.createHealthText());
+
     return model;
   }
   
@@ -158,19 +162,31 @@ class TheScene extends THREE.Scene {
 
   moveOvo(){
     for (var i = this.ovos.length - 1; i >= 0; i--) {
-      if(this.ovos[i].position.z > -151){
-       this.ovos[i].translateZ(this.ovos[i].getSpeed());
+      if(this.ovos[i].position.z > -151){    
+        if( this.ovos[i].position.z > this.r2d2.position.z ){
+        }else{
+            if( this.ovos[i].position.x > this.r2d2.position.x-12 && this.ovos[i].position.x < this.r2d2.position.x+12 && this.ovos[i].getHit() == false ){
+                this.ovos[i].setHit({hit: true});
+               this.r2d2.quitarEnergia({type: this.ovos[i].getType() });
+               this.checkEndGame();
+            }
+
+        }
+      this.ovos[i].translateZ(this.ovos[i].getSpeed()); 
       }else if(this.ovos[i].position.z < -150){
         this.ovos[i].position.z = 140;
         this.s = Math.random()*(-5 - (-2)) + (-2);
         this.p = Math.floor(Math.random() * (140 - (-140) + 1)) + -140;
         this.ovos[i].setSpeed({speed: this.s });
         this.ovos[i].position.x = this.p;
+        this.ovos[i].setHit({hit:false});
       }
     }
   
 
   }
+
+
 
   /// It returns the camera
   /**
@@ -196,8 +212,52 @@ class TheScene extends THREE.Scene {
     this.camera.aspect = anAspectRatio;
     this.camera.updateProjectionMatrix();
   }
-  
+  checkEndGame(){
+    if(this.r2d2.getEnergia() <= 0){
+
+    }
+  } 
  
+  createHealthText(){
+
+
+    var loader = new THREE.FontLoader();
+    var text;
+    loader.load( '../fonts/Helvetica_Regular.json', function ( font ) {
+     text = new THREE.TextGeometry( 'Energia', {
+        font: font,
+        size: 800,
+        height: 800,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelSegments: 5
+        } );
+    } );
+   
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xdddddd
+    });
+    var textMesh = new THREE.Mesh( text, material );
+
+    return textMesh;
+    
+  }
+
+
+  createHealthBar(){
+   var barra = new THREE.BoxGeometry (100, 10, 10);
+   var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+   var hbar = new THREE.Mesh (barra, material);
+
+   hbar.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, 75, -170));
+   hbar.autoUpdateMatrix = false;
+   hbar.updateMatrix();
+   return hbar;
+
+ }
+
 }
 
   // class variables

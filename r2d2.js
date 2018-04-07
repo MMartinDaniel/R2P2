@@ -32,7 +32,7 @@ class r2d2 extends THREE.Object3D {
     
     //SESION 2 DATOS
 
-    this.energia = 10;
+    this.energia = 100;
     this.puntos = 0;
 
     // Objects for operating with the r2d2
@@ -159,7 +159,23 @@ setBrazos(brazos){
 //  this.brazoD.height = brazos;
 //  this.brazoI.height = brazos;
 }
+quitarEnergia(parametros){
+
+  var puntos =  Math.floor(Math.random() * (5 - 0 + 1));
+  if(parametros.type == 1){
+     this.energia = this.energia-10;
+   }else{
+    this.energia = this.energia +(5 - puntos);
+   }
+
 }
+
+getEnergia(){
+  return this.energia;
+}
+
+}
+
 
 
 

@@ -31,7 +31,7 @@ class Ovo extends THREE.Object3D {
     this.brazoD = null;
     this.brazoI = null;
     this.base = null;
-
+    this.hit = false;
 
     this.add(this.createPlato());
 
@@ -66,6 +66,16 @@ class Ovo extends THREE.Object3D {
   }
   setSpeed(parameters){
   	this.speed = parameters.speed;
+  }
+
+  getType(){
+    return this.type;
+  }
+  getHit(){
+    return this.hit;
+  }
+  setHit(parameters){
+    this.hit = parameters.hit;
   }
 
 }
