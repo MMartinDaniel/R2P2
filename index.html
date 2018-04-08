@@ -7,7 +7,9 @@
     @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
 
         #endbox{
-            display: none;
+            /*display: none;*/
+            visibility: hidden;
+            display: flex;
             position: absolute;
             margin: 0;
             height: 100%;
@@ -112,8 +114,8 @@
 <body>
 <div id='endbox'>
     <div class="gameover">
-      <h1>Game Over</h1>
-      <p>Recargar para volver a jugar</p>
+      <h1 id='gamepausa'>Game Over</h1>
+      <p id='recarg'>Recargar para volver a jugar</p>
       <p> Puntuacion:<b id='pfinal'></b> </p>
     </div>
 </div>

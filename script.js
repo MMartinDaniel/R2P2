@@ -14,10 +14,7 @@ stats = null;
 mouseDown = false;
 
 
-  _moveLeft = false;
-  _moveRight = false;
-  _moveUp = false;
-  _moveDown = false;
+  _pause = false;
 
 
 /// The current mode of the application
@@ -232,14 +229,55 @@ function createRenderer () {
 
 /// It renders every frame
 function render() {
+
   requestAnimationFrame(render);
-  
   stats.update();
   scene.getCameraControls().update ();
-  scene.animate(GUIcontrols);
-  
-  renderer.render(scene, scene.getCamera());
+  if(_pause == true || this.scene.gameover == true){
+  }else{
+     scene.animate(GUIcontrols);
+     renderer.render(scene, scene.getCamera());
+  }
 }
+
+function onKeyDown(){
+  if(event.repeat){return;}
+  switch (event.key.toLowerCase()) {
+      case 'arrowup': 
+      case 'w':  scene.makeMove({move:'up'}); break;
+
+      case 'arrowleft': 
+      case 'a': scene.makeMove({move:'left'}); break;
+
+      case 'arrowdown': 
+      case 's': scene.makeMove({move:'down'}); break;
+
+      case 'arrowright':
+      case 'd': scene.makeMove({move:'right'}); break;
+
+      case ' ':  this.pause(); break;
+    }
+}
+
+function pause(){
+
+  if(_pause == false){
+    _pause = true;
+    document.getElementById('endbox').style.visibility = "visible";
+    document.getElementById('gamepausa').innerHTML = "Pausa";
+    document.getElementById('recarg').innerHTML = "Pulsa P para continuar";
+   }else{
+    _pause = false;
+    document.getElementById('endbox').style.visibility = 'hidden';
+  }
+/*
+      document.getElementById('endbox').style.display = 'flex';
+      */
+    document.getElementById('pfinal').innerHTML = this.scene.r2d2.getPuntos();
+}
+
+
+
 
 /// The main function
 $(function () {
@@ -254,8 +292,8 @@ $(function () {
   window.addEventListener ("mouseup", onMouseUp, true);
   window.addEventListener ("mousewheel", onMouseWheel, true);   // For Chrome an others
   window.addEventListener ("DOMMouseScroll", onMouseWheel, true); // For Firefox
-  window.addEventListener('keydown', this._onKeyDown,false);
-  window.addEventListener('keyup', this._onKeyUp,false);
+  window.addEventListener('keypress', onKeyDown,false);
+ // window.addEventListener('keyup', onKeyUp,false);
   // create a scene, that will hold all our elements such as objects, cameras and lights.
   scene = new TheScene (renderer.domElement);
  

@@ -20,12 +20,15 @@ class TheScene extends THREE.Scene {
     this.ovo = new THREE.Object3D();
     this.n_ovos = 0;
     this.createLights ();
-    this.createCamera (renderer);
+   // this.createCamera (renderer);
     this.axis = new THREE.AxisHelper (25);
     this.add (this.axis);
     this.model = this.createModel ();
     this.healthbar = this.createHealthBar();
     this.model.add(this.healthbar);
+    this.gameover = false;
+        this.camera = this.r2d2.fpsgetCamera();
+    this.createCamera (renderer);
 
     this.add (this.model);
 
@@ -44,6 +47,7 @@ class TheScene extends THREE.Scene {
    * @param renderer - The renderer associated with the camera
    */
   createCamera (renderer) {
+  /*
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
    // this.camera.position.set (240, 240, 240);
    this.camera.position.set(240,160,240);
@@ -55,31 +59,34 @@ class TheScene extends THREE.Scene {
     this.trackballControls.zoomSpeed = -2;
     this.trackballControls.panSpeed = 0.5;
     this.trackballControls.target = look;
-    
-    this.add(this.camera);
+  */
+ 
+
+
+    //this.add(this.camera);
   }
   
   /// It creates lights and adds them to the graph
   createLights () {
     // add subtle ambient lighting
-    this.ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
+    this.ambientLight = new THREE.AmbientLight(0xccddee, 0.5);
     this.add (this.ambientLight);
 
     // add spotlight for the shadows
-    this.spotLight = new THREE.SpotLight( 0xffffff );
+    this.spotLight = new THREE.SpotLight( 0xffffff,0.5 );
     this.spotLight.position.set( 60, 60, 40 );
     this.spotLight.castShadow = true;
     // the shadow resolution
     this.spotLight.shadow.mapSize.width=2048
     this.spotLight.shadow.mapSize.height=2048;
-    this.add (this.spotLight);
+   // this.add (this.spotLight);
 
 
     //La luz ambiental es una luz que se proyecta en todo el plano, a diferencia de la focal que apunta a una posicion
 
     //P1  Luz añadida
     // add spotlight for the shadows
-    this.addedLight = new THREE.SpotLight( 0xeecccc );
+    this.addedLight = new THREE.SpotLight( 0xeecccc,0.5);
     this.addedLight.position.set( 60, 300, 40 );
     this.addedLight.castShadow = true;
     // the shadow resolution
@@ -94,8 +101,8 @@ class TheScene extends THREE.Scene {
    * @return The model
    */
   createModel () {
-    var model = new THREE.Object3D();
 
+  var model = new THREE.Object3D();
     var loader1 = new THREE.TextureLoader();
     var texturaGrua = loader1.load ("imgs/images.jpg");
     var mat = new THREE.MeshPhongMaterial({map: texturaGrua});
@@ -167,8 +174,6 @@ class TheScene extends THREE.Scene {
             if( this.ovos[i].position.x > this.r2d2.position.x-12 && this.ovos[i].position.x < this.r2d2.position.x+12 && this.ovos[i].getHit() == false ){
                 this.ovos[i].setHit({hit: true});
                 this.r2d2.quitarEnergia({type: this.ovos[i].getType() });
-              this.checkbar();
-               this.checkEndGame();
             }
 
         }
@@ -183,10 +188,36 @@ class TheScene extends THREE.Scene {
         this.ovos[i].setHit({hit:false});
       }
     }
-  
+    this.checkbar();
+   this.checkEndGame();
+
 
   }
 
+  makeMove(parameters){
+    switch (parameters.move) {
+      case 'up':
+          this.r2d2.translateZ(5);
+        break;
+      case'down':
+      this.r2d2.translateZ(-5);
+      break;
+      case'left':
+      // this.r2d2.position.x += -5;
+      var axis = new THREE.Vector3(0,1,0);//tilted a bit on x and y - feel free to plug your different axis here
+      //in your update/draw function
+      this.r2d2.rotateOnAxis(axis, 0.25);
+      break;
+      case'right':
+       // this.r2d2.position.x += -5;
+      var axis = new THREE.Vector3(0,1,0);//tilted a bit on x and y - feel free to plug your different axis here
+      //in your update/draw function
+      this.r2d2.rotateOnAxis(axis, -0.25);
+      break;
+    }
+    this.r2d2.decreaseEnergy();
+
+  }
   checkbar(){
 
     document.getElementById('score').innerHTML = this.r2d2.getPuntos();
@@ -231,11 +262,15 @@ class TheScene extends THREE.Scene {
     this.camera.updateProjectionMatrix();
   }
   checkEndGame(){
-    if(this.r2d2.getEnergia() <= 0){
 
-      document.getElementById('endbox').style.display = 'flex';
+    if(this.r2d2.getEnergia() <= 0 || this.r2d2.position.x >= 154 || this.r2d2.position.x <= -154 || this.r2d2.position.z <= -154 || this.r2d2.position.z >= 154){
+
+      document.getElementById('endbox').style.visibility = 'visible';
+    document.getElementById('gamepausa').innerHTML = "Game Over";
+    document.getElementById('recarg').innerHTML = "Recarga la pagina para volver a jugar";
+
       document.getElementById('pfinal').innerHTML = this.r2d2.getPuntos();
-
+      this.gameover = true;
     }
   } 
  

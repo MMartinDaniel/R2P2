@@ -26,7 +26,7 @@ class r2d2 extends THREE.Object3D {
     this.angle           = 0;
     this.distance        = this.r2d2Width / 2;
     this.height          = this.r2d2Height / 2;
-    
+    this.fps = null;
     // Height of different parts
     this.baseHookHeight = this.r2d2Height/100;
     
@@ -40,6 +40,7 @@ class r2d2 extends THREE.Object3D {
     this.head = null;
     this.brazoD = null;
     this.brazoI = null;
+    this.fps = this.createCamera();
     this.base = this.createBase();
 
 
@@ -64,7 +65,13 @@ class r2d2 extends THREE.Object3D {
     base.add(this.head);
     base.add(this.createShoulder({w:6,ww: 5}));
     base.add(this.createShoulder({w:-6, ww: -5}));
+    base.add(this.fps);
     return base;
+  }
+
+  createCamera(){
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    return this.camera;
   }
 
   // CABEZA
@@ -77,6 +84,17 @@ class r2d2 extends THREE.Object3D {
     head.autoUpdateMatrix = false;
     head.updateMatrix();
     //crear ojo
+
+    // add spotlight for the shadows
+      var spotLight = new THREE.SpotLight( 0xffffff,0.6 );
+      spotLight.position.set( this.position.x, this.position.y+10, this.position.z);
+      spotLight.castShadow = true;
+      spotLight.shadow.camera.near = 300;
+      spotLight.shadow.camera.fov = 1;
+      spotLight.target.position.set( this.position.x, this.position.y-3, this.position.z+3);
+    head.add (spotLight);
+    head.add(spotLight.target);
+
     head.add(this.createEye());
 
     return head;
@@ -176,6 +194,12 @@ getEnergia(){
 }
 getPuntos(){
   return this.puntos;
+}
+decreaseEnergy(){
+  this.energia -=1;
+}
+fpsgetCamera(){
+  return this.fps;
 }
 
 }
