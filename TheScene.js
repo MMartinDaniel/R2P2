@@ -20,14 +20,16 @@ class TheScene extends THREE.Scene {
     this.ovo = new THREE.Object3D();
     this.n_ovos = 0;
     this.createLights ();
+    this.cameraON = 1;
    // this.createCamera (renderer);
+   this.cameraOut = null;
     this.axis = new THREE.AxisHelper (25);
     this.add (this.axis);
     this.model = this.createModel ();
     this.healthbar = this.createHealthBar();
     this.model.add(this.healthbar);
     this.gameover = false;
-        this.camera = this.r2d2.fpsgetCamera();
+    this.cameraR2 = this.r2d2.fpsgetCamera();
     this.createCamera (renderer);
 
     this.add (this.model);
@@ -47,23 +49,22 @@ class TheScene extends THREE.Scene {
    * @param renderer - The renderer associated with the camera
    */
   createCamera (renderer) {
-  /*
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-   // this.camera.position.set (240, 240, 240);
-   this.camera.position.set(240,160,240);
-    var look = new THREE.Vector3 (0,0,0);
-    this.camera.lookAt(look);
-
-    this.trackballControls = new THREE.TrackballControls (this.camera, renderer);
+  
+    this.cameraOut = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+   this.cameraOut.position.set (240, 240, 240);
+   var look = new THREE.Vector3 (0,0,100);
+    var look2 = new THREE.Vector3 (0,0,0);
+    this.cameraR2.lookAt(look);
+    this.cameraOut.lookAt(look2);
+  
+    this.trackballControls = new THREE.TrackballControls (this.cameraOut, renderer);
     this.trackballControls.rotateSpeed = 5;
     this.trackballControls.zoomSpeed = -2;
     this.trackballControls.panSpeed = 0.5;
-    this.trackballControls.target = look;
-  */
- 
+    this.trackballControls.target = look2;
 
-
-    //this.add(this.camera);
+    this.camera = this.cameraOut;
+    this.add(this.cameraOut);
   }
   
   /// It creates lights and adds them to the graph
@@ -141,6 +142,7 @@ class TheScene extends THREE.Scene {
 
  
   animate (controls) {
+   
     this.axis.visible = controls.axis;
     this.spotLight.intensity = controls.lightIntensity;
     //P1
@@ -154,7 +156,23 @@ class TheScene extends THREE.Scene {
     this.r2d2.setPositionH(controls.rotation, controls.distance, controls.height);
   }
   
-
+  checkCamera(parameters){
+    var look = new THREE.Vector3 (0,0,0);
+    var look2 = new THREE.Vector3 (0,0,-100);
+    
+    if(parameters.cam == 1){
+      this.cameraON = 1;
+    }else{
+      this.cameraON = 2;
+    }
+    if(this.cameraON == 1){
+        this.camera = this.cameraOut;
+         this.trackballControls.target = look;
+    }else{
+      this.camera = this.cameraR2;
+      this.trackballControls.target = look2;
+    }
+  }
   spawnOvo(){
     if(this.n_ovos < 10){
       if(Math.floor(Math.random()*10) > 2){

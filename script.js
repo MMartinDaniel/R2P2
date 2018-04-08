@@ -242,7 +242,7 @@ function render() {
 
 function onKeyDown(){
   if(event.repeat){return;}
-  switch (event.key.toLowerCase()) {
+  switch (event.key) {
       case 'arrowup': 
       case 'w':  scene.makeMove({move:'up'}); break;
 
@@ -254,7 +254,8 @@ function onKeyDown(){
 
       case 'arrowright':
       case 'd': scene.makeMove({move:'right'}); break;
-
+      case 'v': scene.checkCamera({cam:2}); break;
+      case 'V': scene.checkCamera({cam:1}); break;
       case ' ':  this.pause(); break;
     }
 }

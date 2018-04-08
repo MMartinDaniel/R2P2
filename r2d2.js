@@ -63,14 +63,19 @@ class r2d2 extends THREE.Object3D {
     //Funciones para crear la cabeza, y los dos hombros, que a su vez incluiran la de cada brazo y estas las de cada pie
     this.head = this.createHead();
     base.add(this.head);
+    base.add(this.fps);
     base.add(this.createShoulder({w:6,ww: 5}));
     base.add(this.createShoulder({w:-6, ww: -5}));
-    base.add(this.fps);
+
     return base;
   }
 
   createCamera(){
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+     // var look = new THREE.Vector3 (0,0,0);
+    // this.camera.lookAt(look);
+   this.camera.position.y = this.position.y+25; // <-- this is relative to the cube's position
+  
     return this.camera;
   }
 
